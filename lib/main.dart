@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var friend = 3;
+  var friend = 4;
   var name = ['김영숙', '홍길동', '피자집'];
   var like = [0, 0, 0];
   var inputName = '';

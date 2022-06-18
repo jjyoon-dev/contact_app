@@ -26,13 +26,8 @@ class _MyAppState extends State<MyApp> {
 
   addNewName(inputName){
     setState((){
-      if (inputName == '') {
-        return;
-      } else {
-        name.add(inputName);
-        like.add(0);
-        Navigator.of(context).pop();
-      }
+      name.add(inputName);
+      like.add(0);
     });
   }
 
@@ -47,7 +42,7 @@ class _MyAppState extends State<MyApp> {
           showDialog(
               context: context,
               builder: (context) {
-                return DialogUI(addOne : addOne, addNewName : addNewName,);
+                return DialogUI(addOne : addOne, addNewName : addNewName, name : name, like : like);
               });
         },
       ),
@@ -97,9 +92,11 @@ class _MyAppState extends State<MyApp> {
 
 // DialogUI
 class DialogUI extends StatelessWidget {
-  DialogUI({Key? key, this.addOne, this.addNewName,}) : super(key: key);
+  DialogUI({Key? key, this.addOne, this.addNewName, this.name, this.like}) : super(key: key);
   final addOne;
   final addNewName;
+  final name;
+  final like;
   var inputData = TextEditingController();
   var inputNewName = '';
 
@@ -146,9 +143,10 @@ class DialogUI extends StatelessWidget {
                           height: 50,
                           child: TextButton(
                             onPressed: () {
+                              print("여기" + inputNewName);
                               addNewName(inputNewName);
                               addOne();
-                              // Navigator.of(context).pop();
+                              Navigator.of(context).pop();
                             },
                             child: Text("완료"),
                             style: TextButton.styleFrom(

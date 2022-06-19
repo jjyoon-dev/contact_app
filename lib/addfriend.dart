@@ -48,7 +48,6 @@ class _MyAppState extends State<MyApp> {
       ),
       appBar: AppBar(
         title: Text('연락처앱  ' + friend.toString()),
-
       ),
       body: ListView.builder(
         itemCount: name.length,

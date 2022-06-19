@@ -13,24 +13,26 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var friend = 3;
-  var name = ['김영숙', '홍길동', '피자집'];
-  var like = [0, 0, 0];
-  var inputName = '';
+  // var friend = 3;
+  // var name = [['김영숙', 0], ['홍길동', 0], ['피자집', 0], ['김철수', 1]];
+  List<Map> name = [
+    {'name' : '김영숙', 'like' : 0},
+    {'name' : '홍길동', 'like' : 0},
+    {'name' : '치킨집', 'like' : 0},
+    {'name' : '피자집', 'like' : 0},
+  ];
 
-  addOne(){
-    setState((){
-      friend++;
-    });
-  }
+  // var like = [0, 0, 0];
+  var inputName = '';
 
   addNewName(inputName){
     setState((){
       if (inputName == '') {
         return;
       } else {
-        name.add(inputName);
-        like.add(0);
+        name.add(
+          {"name" : inputName, "like" : 0,}
+        );
         Navigator.of(context).pop();
       }
     });
@@ -43,16 +45,15 @@ class _MyAppState extends State<MyApp> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           print(name);
-          addOne;
           showDialog(
               context: context,
               builder: (context) {
-                return DialogUI(addOne : addOne, addNewName : addNewName,);
+                return DialogUI(addNewName : addNewName,);
               });
         },
       ),
       appBar: AppBar(
-        title: Text('연락처앱  ' + friend.toString()),
+        title: Text('연락처앱  ' + name.length.toString()),
 
       ),
       body: ListView.builder(
@@ -63,18 +64,33 @@ class _MyAppState extends State<MyApp> {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(name[i]),
-                Text(like[i].toString()),
+                Text(name[i]['name'].toString()),
+                Text(name[i]['like'].toString()),
               ],
             ),
-            trailing: ElevatedButton(
-              child: Text('like'),
-              onPressed: () {
-                setState(() {
-                  like[i]++;
-                });
-              },
-            ),
+            trailing: Wrap(
+              spacing: 10,
+              children: [
+                ElevatedButton(
+                  child: Text('like'),
+                  onPressed: () {
+                    setState(() {
+                      name[i]['like'] = (name[i]['like'] as int) + 1;
+                    });
+                  },
+                ),
+                ElevatedButton(
+                  child: Text('delete'),
+                  onPressed: () {
+                    setState(() {
+                      name.removeAt(i);
+                      print(name);
+                    });
+                  },
+                ),
+              ],
+            )
+
           );
         },
       ),
@@ -97,8 +113,7 @@ class _MyAppState extends State<MyApp> {
 
 // DialogUI
 class DialogUI extends StatelessWidget {
-  DialogUI({Key? key, this.addOne, this.addNewName,}) : super(key: key);
-  final addOne;
+  DialogUI({Key? key, this.addNewName,}) : super(key: key);
   final addNewName;
   var inputData = TextEditingController();
   var inputNewName = '';
@@ -147,7 +162,6 @@ class DialogUI extends StatelessWidget {
                           child: TextButton(
                             onPressed: () {
                               addNewName(inputNewName);
-                              addOne();
                               // Navigator.of(context).pop();
                             },
                             child: Text("완료"),

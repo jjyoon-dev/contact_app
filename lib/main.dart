@@ -15,6 +15,26 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  getPermission() async {
+    var status = await Permission.contacts.status; // 연락처 권한줬는지 여부
+    if (status.isGranted) {
+      print('허락됨');
+    } else if (status.isDenied) {
+      print('거절됨');
+      Permission.contacts.request(); // 허락해달라고 팝업띄우는 코드
+      // openAppSettings(); //앱 설정화면 켜줌. 유저가 직접 권한 설정 가능.
+    }
+  }
+
+  // 앱이 실행될때 함수 실행 // initState 안에 적은 코드는 위젯 로드될 때 한번 실행됨.
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getPermission();
+  // }
+  // → 요즘은 앱 실행할때 바로 권한 요청하지 않음. 기능 실행할때 요청하는게 좋음.
+
   // var friend = 3;
   // var name = [['김영숙', 0], ['홍길동', 0], ['피자집', 0], ['김철수', 1]];
   List<Map> name = [
@@ -56,7 +76,9 @@ class _MyAppState extends State<MyApp> {
       ),
       appBar: AppBar(
         title: Text('연락처앱  ' + name.length.toString()),
-
+        actions: [
+          IconButton(onPressed: (){ getPermission(); }, icon: Icon(Icons.contacts)),
+        ],
       ),
       body: ListView.builder(
         itemCount: name.length,

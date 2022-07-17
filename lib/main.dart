@@ -21,6 +21,17 @@ class _MyAppState extends State<MyApp> {
     var status = await Permission.contacts.status; // 연락처 권한줬는지 여부
     if (status.isGranted) {
       print('허락됨');
+      // 연락처 꺼내기
+      var contacts = await ContactsService.getContacts();
+      setState(() {
+        name = contacts;
+      });
+      // 연락처 추가하는 법
+        // var newPerson = new Contact(); //new 는 생략가능
+        // newPerson.givenName = '민수';
+        // newPerson.familyName = '김';
+        // await ContactsService.addContact(newPerson);
+
     } else if (status.isDenied) {
       print('거절됨');
       Permission.contacts.request(); // 허락해달라고 팝업띄우는 코드
@@ -38,12 +49,14 @@ class _MyAppState extends State<MyApp> {
 
   // var friend = 3;
   // var name = [['김영숙', 0], ['홍길동', 0], ['피자집', 0], ['김철수', 1]];
-  List<Map> name = [
-    {'name' : '김영숙', 'like' : 0},
-    {'name' : '홍길동', 'like' : 0},
-    {'name' : '치킨집', 'like' : 0},
-    {'name' : '피자집', 'like' : 0},
-  ];
+  // List<Map> name = [
+  //   {'name' : '김영숙', 'like' : 0},
+  //   {'name' : '홍길동', 'like' : 0},
+  //   {'name' : '치킨집', 'like' : 0},
+  //   {'name' : '피자집', 'like' : 0},
+  // ];
+
+  var name = [];
 
   // var like = [0, 0, 0];
   var inputName = '';
@@ -86,13 +99,14 @@ class _MyAppState extends State<MyApp> {
         itemBuilder: (context, i) {
           return ListTile(
             leading: Image.asset('assets/user_profile.png'),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(name[i]['name'].toString()),
-                Text(name[i]['like'].toString()),
-              ],
-            ),
+            // title: Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(name[i]['name'].toString()),
+            //     Text(name[i]['like'].toString()),
+            //   ],
+            // ),
+            title: Text(name[i].givenName),
             trailing: Wrap(
               spacing: 10,
               children: [

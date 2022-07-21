@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
 
-
 void main() {
   runApp(MaterialApp(home: MyApp()));
 }
@@ -16,7 +15,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   getPermission() async {
     var status = await Permission.contacts.status; // 연락처 권한줬는지 여부
     if (status.isGranted) {
@@ -24,13 +22,13 @@ class _MyAppState extends State<MyApp> {
       // 연락처 꺼내기
       var contacts = await ContactsService.getContacts();
       setState(() {
-        name = contacts;
+        contactList = contacts;
       });
       // 연락처 추가하는 법
-        // var newPerson = new Contact(); //new 는 생략가능
-        // newPerson.givenName = '민수';
-        // newPerson.familyName = '김';
-        // await ContactsService.addContact(newPerson);
+      // var newPerson = new Contact(); //new 는 생략가능
+      // newPerson.givenName = '민수';
+      // newPerson.familyName = '김';
+      // await ContactsService.addContact(newPerson);
 
     } else if (status.isDenied) {
       print('거절됨');
@@ -56,81 +54,83 @@ class _MyAppState extends State<MyApp> {
   //   {'name' : '피자집', 'like' : 0},
   // ];
 
-  var name = [];
+  List<Contact> contactList = [];
 
-  // var like = [0, 0, 0];
+  List<int> like = [0, 0, 0]; // var like -> List<int> list인데 int만 있는 list
   var inputName = '';
 
-  addNewName(inputName){
-    setState((){
+  addNewName(inputName) {
+    setState(() {
       if (inputName == '') {
         return;
       } else {
-        name.add(
-          {"name" : inputName, "like" : 0,}
-        );
+        contactList.add(inputName);
         Navigator.of(context).pop();
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print(name);
+          print(contactList);
           showDialog(
               context: context,
               builder: (context) {
-                return DialogUI(addNewName : addNewName,);
+                return DialogUI(
+                  addNewName: addNewName,
+                );
               });
         },
       ),
       appBar: AppBar(
-        title: Text('연락처앱  ' + name.length.toString()),
+        title: Text('연락처앱  ' + contactList.length.toString()),
         actions: [
-          IconButton(onPressed: (){ getPermission(); }, icon: Icon(Icons.contacts)),
+          IconButton(
+              onPressed: () {
+                getPermission();
+              },
+              icon: Icon(Icons.contacts)),
         ],
       ),
       body: ListView.builder(
-        itemCount: name.length,
+        itemCount: contactList.length,
         itemBuilder: (context, i) {
           return ListTile(
-            leading: Image.asset('assets/user_profile.png'),
-            // title: Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Text(name[i]['name'].toString()),
-            //     Text(name[i]['like'].toString()),
-            //   ],
-            // ),
-            title: Text(name[i].givenName),
-            trailing: Wrap(
-              spacing: 10,
-              children: [
-                ElevatedButton(
-                  child: Text('like'),
-                  onPressed: () {
-                    setState(() {
-                      name[i]['like'] = (name[i]['like'] as int) + 1;
-                    });
-                  },
-                ),
-                ElevatedButton(
-                  child: Text('delete'),
-                  onPressed: () {
-                    setState(() {
-                      name.removeAt(i);
-                      print(name);
-                    });
-                  },
-                ),
-              ],
-            )
-
-          );
+              leading: Image.asset('assets/user_profile.png'),
+              // title: Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(name[i]['name'].toString()),
+              //     Text(name[i]['like'].toString()),
+              //   ],
+              // ),
+              title: Text(contactList[i].givenName ?? '이름이 없습니다.'),
+              // ?? 왼쪽변수가 null이면 오른쪽을 남겨라. null check 삼항연산자
+              trailing: Wrap(
+                spacing: 10,
+                children: [
+                  ElevatedButton(
+                    child: Text('like'),
+                    onPressed: () {
+                      setState(() {
+                        like[i] = like[i] + 1;
+                      });
+                    },
+                  ),
+                  ElevatedButton(
+                    child: Text('delete'),
+                    onPressed: () {
+                      setState(() {
+                        contactList.removeAt(i);
+                        print(contactList);
+                      });
+                    },
+                  ),
+                ],
+              ));
         },
       ),
       bottomNavigationBar: BottomAppBar(
@@ -149,10 +149,12 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-
 // DialogUI
 class DialogUI extends StatelessWidget {
-  DialogUI({Key? key, this.addNewName,}) : super(key: key);
+  DialogUI({
+    Key? key,
+    this.addNewName,
+  }) : super(key: key);
   final addNewName;
   var inputData = TextEditingController();
   var inputNewName = '';
@@ -162,83 +164,132 @@ class DialogUI extends StatelessWidget {
     return Dialog(
       // shape: RoundedRectangleBorder(
       //     borderRadius: BorderRadius.circular(20.0)), //this right here
-      child: Container(
-        width: 500,
-        height: 300,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                // controller: inputData,
-                onChanged: (text){ inputNewName = text; print(inputNewName);},
-                decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.red)
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.yellow)
-                    ),
-                    hintText: '텍스트를 입력하세요.'),
-              ),
-              Container(
-                child: SizedBox(
-                  width: 300,
-                  height: 150,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      // color: Colors.green,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                          width: double.infinity,
-                          height: 50,
-                          child: TextButton(
-                            onPressed: () {
-                              addNewName(inputNewName);
-                              // Navigator.of(context).pop();
-                            },
-                            child: Text("완료"),
-                            style: TextButton.styleFrom(
-                              primary: Colors.white,
-                              backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3)),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          width: 500,
+          height: 500,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                      margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
+                      child: Text('연락처 추가하기', style: TextStyle(fontSize: 22))),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
+                  child: TextField(
+                    // controller: inputData,
+                    onChanged: (text) {
+                      inputNewName = text;
+                      print(inputNewName);
+                    },
+                    decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.yellow)),
+                        hintText: '성'),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
+                  child: TextField(
+                    // controller: inputData,
+                    onChanged: (text) {
+                      inputNewName = text;
+                      print(inputNewName);
+                    },
+                    decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.green)),
+                        hintText: '이름'),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
+                  child: TextField(
+                    // controller: inputData,
+                    onChanged: (text) {
+                      inputNewName = text;
+                      print(inputNewName);
+                    },
+                    decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.yellow)),
+                        hintText: 'Phone Number'),
+                  ),
+                ),
+                Container(
+                  child: SizedBox(
+                    width: 300,
+                    height: 150,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          // color: Colors.green,
+                          ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            width: double.infinity,
+                            height: 50,
+                            child: TextButton(
+                              onPressed: () {
+                                var newContact = Contact();
+                                newContact.givenName =
+                                    inputData.text; //새로운 연락처 만들기
+                                ContactsService.addContact(
+                                    newContact); // 실제로 연락처에 집어넣기
+                                addNewName(
+                                    inputNewName); // contactList이라는 state에도 저장해보기
+                                // Navigator.of(context).pop();
+                              },
+                              child: Text("완료"),
+                              style: TextButton.styleFrom(
+                                primary: Colors.white,
+                                backgroundColor: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(3)),
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                          width: double.infinity,
-                          height: 50,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text("취소"),
-                            style: TextButton.styleFrom(
-                              primary: Colors.white,
-                              backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3)),
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            width: double.infinity,
+                            height: 50,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("취소"),
+                              style: TextButton.styleFrom(
+                                primary: Colors.white,
+                                backgroundColor: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(3)),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-

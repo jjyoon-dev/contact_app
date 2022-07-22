@@ -205,10 +205,16 @@ class DialogUI extends StatelessWidget {
                       print(inputNewName);
                     },
                     decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.blue.shade50, // TextFiled 배경색
+                        icon: Icon(Icons.star), // TextField 앞에 아이콘 추가
+                        prefixIcon: Icon(Icons.star), // TextField 안쪽 앞에 아이콘 추가
+                        suffixIcon: Icon(Icons.star), // TextField 안쪽 뒤에 아이콘 추가
                         focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10), // border radius 주기
                             borderSide: BorderSide(color: Colors.red)),
                         enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.green)),
+                          borderSide: BorderSide(color: Colors.green)),
                         hintText: '이름'),
                   ),
                 ),

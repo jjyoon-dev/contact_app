@@ -192,7 +192,7 @@ class DialogUI extends StatelessWidget {
                         focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red)),
                         enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.yellow)),
+                            borderSide: BorderSide(color: Colors.green)),
                         hintText: '성'),
                   ),
                 ),
@@ -224,8 +224,8 @@ class DialogUI extends StatelessWidget {
                         focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red)),
                         enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.yellow)),
-                        hintText: 'Phone Number'),
+                            borderSide: BorderSide(color: Colors.green)),
+                        hintText: '전화번호'),
                   ),
                 ),
                 Container(
